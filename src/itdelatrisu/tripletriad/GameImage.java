@@ -36,6 +36,7 @@ public enum GameImage {
 	CARD_BACK ("card-back.png"),
 	CARD_BLUE ("card-blue.png"),
 	CARD_RED ("card-red.png"),
+	CARD_GRAY ("card-gray.png"),
 
 	// rank symbols
 	RANK_0 ("rank-0.png"),
@@ -112,6 +113,7 @@ public enum GameImage {
 		CARD_BACK.setScale(cardLength, cardLength);
 		CARD_BLUE.setScale(cardLength, cardLength);
 		CARD_RED.setScale(cardLength, cardLength);
+		CARD_GRAY.setScale(cardLength, cardLength);
 
 		float cursorScale = (cardLength / 3f) / CURSOR.img.getWidth();
 		CURSOR.setScale(cursorScale);

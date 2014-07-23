@@ -1,7 +1,7 @@
 # Triple Triad
-Triple Triad is a card game from Final Fantasy VIII.  This copy implements only
-the game itself, with all rule types and basic AI.  Settings can be modified in
-the generated `.triple-triad.cfg` file.
+Triple Triad is a card game from *Final Fantasy VIII*.  This project implements
+only the game itself, with all rule types and basic AI.  Settings can be
+modified in the generated `.triple-triad.cfg` file.
 
 For a list of rules and gameplay instructions,
 [read here](http://finalfantasy.wikia.com/wiki/Triple_Triad).

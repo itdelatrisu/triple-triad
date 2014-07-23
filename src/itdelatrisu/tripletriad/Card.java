@@ -53,6 +53,12 @@ public class Card {
 	/** Card owner (PLAYER or OPPONENT). */
 	private boolean owner;
 
+	/** Whether or not the owner of the card recently changed. */
+	private boolean isNewColor = false;
+
+	/** Color change animation progress [0, 2]. */
+	private static float colorChangeAlpha = 0f;
+
 	/**
 	 * Returns the integer rank of a character.
 	 * @param c the character
@@ -185,10 +191,28 @@ public class Card {
 		if (img == null)
 			loadCardImage();
 
-		if (owner == TripleTriad.PLAYER)
-			GameImage.CARD_BLUE.getImage().draw(x, y);
-		else
-			GameImage.CARD_RED.getImage().draw(x, y);
+		// draw background color
+		if (isColorChange() && isNewColor) {
+			Image colorImg;
+			boolean color = (colorChangeAlpha <= 1f) ? owner : !owner;
+			if (color == TripleTriad.PLAYER)
+				colorImg = GameImage.CARD_BLUE.getImage();
+			else
+				colorImg = GameImage.CARD_RED.getImage();
+
+			float alpha = (colorChangeAlpha <= 1f) ? 1f - colorChangeAlpha : colorChangeAlpha - 1f;
+			colorImg.setAlpha(alpha);
+			GameImage.CARD_GRAY.getImage().draw(x, y);
+			colorImg.draw(x, y);
+			colorImg.setAlpha(1f);
+		} else {
+			if (owner == TripleTriad.PLAYER)
+				GameImage.CARD_BLUE.getImage().draw(x, y);
+			else
+				GameImage.CARD_RED.getImage().draw(x, y);
+			isNewColor = false;
+		}
+
 		img.draw(x, y);
 	}
 
@@ -259,19 +283,38 @@ public class Card {
 	public void setPosition(int position) { this.position = position; }
 
 	/**
+	 * Returns the card owner.
+	 * @return PLAYER or OPPONENT
+	 */
+	public boolean getOwner() { return owner; }
+
+	/**
 	 * Sets the card owner.
 	 * @param owner PLAYER or OPPONENT
 	 */
 	public void setOwner(boolean owner) { this.owner = owner; }
 
 	/**
-	 * Changes the card owner.
+	 * Changes the card owner and initiates color change animation.
 	 */
-	public void changeOwner() { owner = !owner; }
+	public void changeOwner() {
+		owner = !owner;
+		isNewColor = true;
+		colorChangeAlpha = 2f;
+	}
 
 	/**
-	 * Returns the card owner.
-	 * @return PLAYER or OPPONENT
+	 * Updates the card animations by a delta interval.
+	 * @param delta the delta interval since the last call
 	 */
-	public boolean getOwner() { return owner; }
+	public static void update(int delta) {
+		if (isColorChange())
+			colorChangeAlpha -= delta / 300f;
+	}
+
+	/**
+	 * Returns whether or not a color change animation is in progress.
+	 * @return true if color changing
+	 */
+	public static boolean isColorChange() { return (colorChangeAlpha > 0f); }
 }

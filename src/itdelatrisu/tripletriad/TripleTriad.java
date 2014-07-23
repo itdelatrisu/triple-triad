@@ -323,8 +323,10 @@ public class TripleTriad extends BasicGame {
 
 		// card result
 		if (result != null) {
+			Card.update(delta);
 			if (!result.isSame() && !result.isPlus()) {
-				result = null;
+				 if (!Card.isColorChange())  // finish color change animation
+					 result = null;
 				return;
 			}
 
@@ -343,7 +345,7 @@ public class TripleTriad extends BasicGame {
 				}
 			} else if (timer < WAIT_TIME / 2)  // delay
 				timer += delta;
-			else {  // reset
+			else if (!Card.isColorChange()) {  // reset
 				textAlpha = 0f;
 				timer = 0;
 				result = null;
@@ -403,7 +405,11 @@ public class TripleTriad extends BasicGame {
 		}
 
 		// restart game
-		if (key == Input.KEY_F5) {
+		if (key == Input.KEY_F5 || (
+			isGameOver() && (playerScore != opponentScore) &&
+			textAlpha >= 1f && result == null &&
+			(key == Input.KEY_Z || key == Input.KEY_ENTER)
+		)) {
 			restart(true);
 			return;
 		}
