@@ -1,0 +1,9 @@
+/.triple-triad.log
+/.triple-triad.cfg
+
+# Eclipse
+/.settings/
+/bin/
+.metadata
+
+Thumbs.db

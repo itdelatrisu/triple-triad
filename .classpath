@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="cards"/>
+	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="lib/lwjgl-2.9.1.jar" sourcepath="lib/src/lwjgl-2.9.1-sources.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/triple-triad/lib/docs/lwjgl-2.9.1-docs.zip!/javadoc"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="triple-triad/native"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/slick.jar" sourcepath="lib/src/slick-sources.zip">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/triple-triad/lib/docs/slick-docs.zip!/javadoc"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/jorbis-0.0.17-2.jar" sourcepath="lib/src/jorbis-0.0.17-2-sources.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
