@@ -267,6 +267,9 @@ public class CardResult {
 		// calculate captures
 		HashSet<Card> comboSet = new HashSet<Card>(3);
 		for (Card c : resultList) {
+			if (c.getOwner() == cardOwner)
+				continue;
+
 			int pos = c.getPosition();
 			if (pos % 3 != 0 &&
 				captures(c, pos, Card.Rank.LEFT, owners[pos], pos - 1, Card.Rank.RIGHT, owners[pos - 1]))
