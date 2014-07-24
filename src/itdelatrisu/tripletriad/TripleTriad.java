@@ -532,6 +532,66 @@ public class TripleTriad extends BasicGame {
 		}
 	}
 
+	@Override
+	public void mousePressed(int button, int x, int y) {
+		if (button != Input.MOUSE_LEFT_BUTTON)
+			return;
+
+		// restart game
+		if (isGameOver() && (playerScore != opponentScore) &&
+			textAlpha >= 1f && result == null) {
+			restart(true);
+			return;
+		}
+
+		// not player turn
+		if (turn != PLAYER || !init || result != null || isGameOver())
+			return;
+
+		int cardLength = Options.getCardLength();
+		int centerX = container.getWidth() / 2;
+		int centerY = container.getHeight() / 2;
+
+		// player hand
+		for (int i = 0, handSize = playerHand.size(); i < handSize; i++) {
+			int index = handSize - i - 1;
+			int posX = centerX + (int) (cardLength * ((selectedCard == index) ? 1.45f : 1.6f));
+			int posY = centerY - ((i - 1) * cardLength / 2);
+			if (x >= posX && x < posX + cardLength &&
+				y >= posY && y < posY + cardLength) {
+				if (selectedCard == index) {
+					if (selectedPosition == -1) {
+						selectedPosition = 4;
+						AudioController.Effect.SELECT.play();
+					} else {
+						selectedPosition = -1;
+						AudioController.Effect.BACK.play();
+					}
+				} else {
+					selectedCard = index;
+					selectedPosition = -1;
+					AudioController.Effect.SELECT.play();
+				}
+				return;
+			}
+		}
+
+		// board
+		int centerOffset = cardLength * 3 / 2;
+		if (x >= centerX - centerOffset && x < centerX + centerOffset &&
+			y >= centerY - centerOffset && y < centerY + centerOffset) {
+			int boardPosition =
+					(x - (centerX - centerOffset)) / cardLength +
+					(y - (centerY - centerOffset)) / cardLength * 3;
+			if (selectedPosition != boardPosition) {
+				selectedPosition = boardPosition;
+				AudioController.Effect.SELECT.play();
+			} else if (playCard(playerHand, selectedCard, boardPosition))
+				AudioController.Effect.SELECT.play();
+			return;
+		}
+	}
+
 	/**
 	 * Re-initializes the game.
 	 * @param newHand whether or not to generate new hands (e.g. false for Sudden Death)

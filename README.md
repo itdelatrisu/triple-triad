@@ -7,6 +7,8 @@ For a list of rules and gameplay instructions,
 [read here](http://finalfantasy.wikia.com/wiki/Triple_Triad).
 
 ## Controls
+In addition to mouse input, the following keys are supported:
+
  * **Movement**: arrow keys
  * **Select**: Z or Enter
  * **Unselect**: X or Backspace
