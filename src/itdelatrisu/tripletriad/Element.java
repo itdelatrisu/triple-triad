@@ -106,7 +106,7 @@ public enum Element {
 
 		float x = (Options.getWidth() / 2) - ((1 - (pos % 3)) * Options.getCardLength());
 		float y = (Options.getHeight() / 2) - ((1 - (pos / 3)) * Options.getCardLength());
-		if (card == null)
+		if (card == null || card.isPlaying())
 			animation.draw(x - (animation.getWidth() / 2), y - (animation.getHeight() / 2));
 		else if (card.getElement() == this)
 			GameImage.BONUS_PLUS.getImage().drawCentered(x, y);

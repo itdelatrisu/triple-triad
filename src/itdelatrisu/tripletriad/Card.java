@@ -56,8 +56,17 @@ public class Card {
 	/** Whether or not the owner of the card recently changed. */
 	private boolean isNewColor = false;
 
-	/** Color change animation progress [0, 2]. */
-	private static float colorChangeAlpha = 0f;
+	/** Old hand index of the played card. */
+	private int oldHandIndex = -1;
+
+	/** Animation progress [0, 2]. */
+	private static float animationProgress = 0f;
+
+	/** Whether or not a color change animation is in progress. */
+	private static boolean isColorChange = false;
+
+	/** Whether or not a card placing animation is in progress. */
+	private static boolean isCardPlaying = false;
 
 	/**
 	 * Returns the integer rank of a character.
@@ -193,29 +202,46 @@ public class Card {
 		if (img == null)
 			loadCardImage();
 
+		// card placing: calculate scale
+		float scale = 1f;
+		if (isCardPlaying() && oldHandIndex != -1)
+			scale += (animationProgress <= 1f) ? animationProgress / 3f : (2 - animationProgress) / 3f;
+		else
+			oldHandIndex = -1;
+
 		// draw background color
 		if (isColorChange() && isNewColor) {
+			// color change: fade out old color, fade in new color
 			Image colorImg;
-			boolean color = (colorChangeAlpha <= 1f) ? owner : !owner;
+			boolean color = (animationProgress <= 1f) ? owner : !owner;
 			if (color == TripleTriad.PLAYER)
 				colorImg = GameImage.CARD_BLUE.getImage();
 			else
 				colorImg = GameImage.CARD_RED.getImage();
 
-			float alpha = (colorChangeAlpha <= 1f) ? 1f - colorChangeAlpha : colorChangeAlpha - 1f;
+			float alpha = (animationProgress <= 1f) ? 1f - animationProgress : animationProgress - 1f;
 			colorImg.setAlpha(alpha);
-			GameImage.CARD_GRAY.getImage().draw(x, y);
+			GameImage.CARD_GRAY.getImage().draw(x, y);  // fade into a gray background
 			colorImg.draw(x, y);
 			colorImg.setAlpha(1f);
 		} else {
+			// normal color (potentially scaled)
+			Image colorImg;
 			if (owner == TripleTriad.PLAYER)
-				GameImage.CARD_BLUE.getImage().draw(x, y);
+				colorImg = GameImage.CARD_BLUE.getImage();
 			else
-				GameImage.CARD_RED.getImage().draw(x, y);
+				colorImg = GameImage.CARD_RED.getImage();
+			if (scale != 1f)
+				colorImg = colorImg.getScaledCopy(scale);
+			colorImg.draw(x, y);
 			isNewColor = false;
 		}
 
-		img.draw(x, y);
+		// draw image (potentially scaled)
+		if (scale != 1f)
+			img.getScaledCopy(scale).draw(x, y);
+		else
+			img.draw(x, y);
 	}
 
 	/**
@@ -237,10 +263,21 @@ public class Card {
 		if (position == -1)
 			return;
 
-		drawCentered(
-			(Options.getWidth() / 2) - ((1 - (position % 3)) * Options.getCardLength()),
-			(Options.getHeight() / 2) - ((1 - (position / 3)) * Options.getCardLength())
-		);
+		int height = Options.getHeight();
+		int cardLength = Options.getCardLength();
+		int x = (Options.getWidth() / 2) - ((1 - (position % 3)) * cardLength);
+		int y = (height / 2) - ((1 - (position / 3)) * cardLength);
+
+		// card placing animation
+		if (isCardPlaying() && oldHandIndex != -1) {
+			if (animationProgress >= 1f) {
+				drawInHand(oldHandIndex - (1.5f * (2 - animationProgress) * height / cardLength), true);
+				return;
+			} else
+				y -= (animationProgress) * height;
+		}
+
+		drawCentered(x, y);
 	}
 
 	/**
@@ -249,28 +286,25 @@ public class Card {
 	 * @param selected true if the card is currently selected
 	 */
 	public void drawInHand(float pos, boolean selected) {
-		if (position != -1)
-			return;
-
+		int cardLength = Options.getCardLength();
 		int posX = Options.getWidth() / 2;
-		int posY = (Options.getHeight() / 2) - Options.getCardLength();
-		float offsetX = Options.getCardLength() * ((selected) ? 1.95f : 2.1f);
-		float offsetY = Options.getCardLength() / 2f;
+		float posY = ((Options.getHeight() / 2) - cardLength) + (pos * cardLength / 2f);
+		float offsetX = cardLength * ((selected) ? 1.95f : 2.1f);
+
 		if (owner == TripleTriad.PLAYER)
-			drawCentered(posX + offsetX, posY + (pos * offsetY));
+			drawCentered(posX + offsetX, posY);
 		else {
 			if (Rule.OPEN.isActive())
-				drawCentered(posX - offsetX, posY + (pos * offsetY));
-			else
-				GameImage.CARD_BACK.getImage().drawCentered(posX - offsetX, posY + (pos * offsetY));
+				drawCentered(posX - offsetX, posY);
+			else {
+				// draw card back (potentially scaled)
+				Image cardBack = GameImage.CARD_BACK.getImage();
+				if (isCardPlaying() && oldHandIndex != -1 && animationProgress > 1f)
+					cardBack = cardBack.getScaledCopy(1 + ((2 - animationProgress) / 3f));
+				cardBack.drawCentered(posX - offsetX, posY);
+			}
 		}
 	}
-
-	/**
-	 * Returns whether or not the card has been played.
-	 * @return true if played
-	 */
-	public boolean isPlayed() { return (position != -1); }
 
 	/**
 	 * Returns the card position.
@@ -279,10 +313,30 @@ public class Card {
 	public int getPosition() { return position; }
 
 	/**
-	 * Sets the card position.
-	 * @param position the position
+	 * Resets the card position to -1 (not played).
 	 */
-	public void setPosition(int position) { this.position = position; }
+	public void resetPosition() { position = -1; }
+
+	/**
+	 * Plays the card at a position and initiates the animation.
+	 * @param position the board position
+	 * @param index the hand position of the card
+	 */
+	public void playAtPosition(int position, int index) {
+		this.position = position;
+		oldHandIndex = index;
+
+		isCardPlaying = true;
+		animationProgress = 2f;
+	}
+
+	/**
+	 * Returns whether or not this card's placement is currently being animated.
+	 * @return true if currently playing
+	 */
+	public boolean isPlaying() {
+		return (Card.isCardPlaying() && oldHandIndex != -1);
+	}
 
 	/**
 	 * Returns the card owner.
@@ -302,7 +356,9 @@ public class Card {
 	public void changeOwner() {
 		owner = !owner;
 		isNewColor = true;
-		colorChangeAlpha = 2f;
+
+		isColorChange = true;
+		animationProgress = 2f;
 	}
 
 	/**
@@ -310,13 +366,24 @@ public class Card {
 	 * @param delta the delta interval since the last call
 	 */
 	public static void update(int delta) {
-		if (isColorChange())
-			colorChangeAlpha -= delta / 300f;
+		if (isColorChange() || isCardPlaying()) {
+			animationProgress -= delta / 300f;
+			if (animationProgress <= 0f) {
+				isColorChange = false;
+				isCardPlaying = false;
+			}
+		}
 	}
 
 	/**
 	 * Returns whether or not a color change animation is in progress.
 	 * @return true if color changing
 	 */
-	public static boolean isColorChange() { return (colorChangeAlpha > 0f); }
+	public static boolean isColorChange() { return isColorChange; }
+
+	/**
+	 * Returns whether or not a card placing animation is in progress.
+	 * @return true if card playing
+	 */
+	public static boolean isCardPlaying() { return isCardPlaying; }
 }

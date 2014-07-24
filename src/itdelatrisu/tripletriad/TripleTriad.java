@@ -350,13 +350,33 @@ public class TripleTriad extends BasicGame {
 			}
 			return;
 		}
+		
+		// card playing
+		if (Card.isCardPlaying()) {
+			Card.update(delta);
+			if (!Card.isCardPlaying()) {
+				// change card owners and adjust score
+				if (result.isSame()) {
+					AudioController.Effect.SPECIAL.play();
+					cardResult(result.getSameList());
+				} else if (result.isPlus()) {
+					AudioController.Effect.SPECIAL.play();
+					cardResult(result.getPlusList());
+				}
+				if (result.hasCapture())
+					cardResult(result.getCapturedList());
+			}
+			return;
+		}
 
 		// card result
 		if (result != null) {
 			Card.update(delta);
 			if (!result.isSame() && !result.isPlus()) {
-				 if (!Card.isColorChange())  // finish color change animation
-					 result = null;
+				if (!Card.isColorChange()) {  // finish color change animation
+					result = null;
+					turn = !turn;
+				}
 				return;
 			}
 
@@ -380,6 +400,7 @@ public class TripleTriad extends BasicGame {
 				timer = 0;
 				result = null;
 				isCombo = false;
+				turn = !turn;
 			}
 			return;
 		}
@@ -542,8 +563,8 @@ public class TripleTriad extends BasicGame {
 					opponentHand.add(opponentCards[i]);
 
 				// reset the card positions
-				playerCards[i].setPosition(-1);
-				opponentCards[i].setPosition(-1);
+				playerCards[i].resetPosition();
+				opponentCards[i].resetPosition();
 			}
 		}
 
@@ -593,29 +614,15 @@ public class TripleTriad extends BasicGame {
 
 		// set card
 		Card card = hand.get(index);
-		card.setPosition(position);
+		card.playAtPosition(position, index);
 		board[position] = card;
-
-		// calculate the results
-		result = new CardResult(card, position, board, elements);
-
-		// change card owners and adjust score
-		if (result.isSame()) {
-			cardResult(result.getSameList());
-			AudioController.Effect.SPECIAL.play();
-		} else if (result.isPlus()) {
-			cardResult(result.getPlusList());
-			AudioController.Effect.SPECIAL.play();
-		}
-		if (result.hasCapture())
-			cardResult(result.getCapturedList());
-
-		// clean up
+		AudioController.Effect.CARD.play();
 		hand.remove(index);
 		selectedCard = 0;
 		selectedPosition = -1;
-		turn = !turn;
-		AudioController.Effect.CARD.play();
+
+		// calculate the results
+		result = new CardResult(card, position, board, elements);
 
 		return true;
 	}
