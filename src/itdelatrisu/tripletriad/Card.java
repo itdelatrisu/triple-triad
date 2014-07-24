@@ -113,24 +113,26 @@ public class Card {
 		try {
 			// base image
 			Image card = new Image(String.format("%03d.png", id));
-			card = card.getScaledCopy(Options.getCardLength(), Options.getCardLength());
+			int length = card.getWidth();
 			Graphics g = card.getGraphics();
 
 			// ranks
 			int rankWidth = GameImage.RANK_0.getImage().getWidth();
 			int rankHeight = GameImage.RANK_0.getImage().getHeight();
-			float rankX = Options.getCardLength() * 0.06f;
-			float rankY = Options.getCardLength() * 0.06f;
-			g.drawImage(GameImage.getRank(rankTop).getImage(), rankX + (rankWidth / 2f), rankY);
-			g.drawImage(GameImage.getRank(rankLeft).getImage(), rankX, rankY + rankHeight);
-			g.drawImage(GameImage.getRank(rankRight).getImage(), rankX + rankWidth, rankY + rankHeight);
-			g.drawImage(GameImage.getRank(rankBottom).getImage(), rankX + (rankWidth / 2f), rankY + (rankHeight * 2));
+			float rankOffset = length * 0.06f;
+			g.drawImage(GameImage.getRank(rankTop).getImage(), rankOffset + (rankWidth / 2f), rankOffset);
+			g.drawImage(GameImage.getRank(rankLeft).getImage(), rankOffset, rankOffset + rankHeight);
+			g.drawImage(GameImage.getRank(rankRight).getImage(), rankOffset + rankWidth, rankOffset + rankHeight);
+			g.drawImage(GameImage.getRank(rankBottom).getImage(), rankOffset + (rankWidth / 2f), rankOffset + (rankHeight * 2));
 
 			// element
-			if (element != Element.NEUTRAL)
-				g.drawImage(element.getFrame(0), Options.getCardLength() * 0.7f, Options.getCardLength() * 0.05f);
+			if (element != Element.NEUTRAL) {
+				Image e = element.getFirstFrame();
+				g.drawImage(e, (length * 0.94f) - e.getWidth(), length * 0.05f);
+			}
 
 			g.flush();
+			card = card.getScaledCopy(Options.getCardLength(), Options.getCardLength());
 			this.img = card;
 		} catch (Exception e) {
 			Log.error(String.format("Failed to load card %d.", id), e);

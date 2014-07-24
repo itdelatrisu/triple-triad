@@ -105,6 +105,7 @@ public enum GameImage {
 	 */
 	private static void scaleImages() {
 		int cardLength = Options.getCardLength();
+		float baseScale = cardLength / 256f;
 
 		float bgScale = (float) Options.getWidth() / BOARD_MAT.img.getWidth();
 		BOARD_MAT.setScale(bgScale);
@@ -128,19 +129,6 @@ public enum GameImage {
 		SCORE_7.setScale(scoreLength, scoreLength);
 		SCORE_8.setScale(scoreLength, scoreLength);
 		SCORE_9.setScale(scoreLength, scoreLength);
-
-		float baseScale = cardLength / 256f;
-		RANK_0.setScale(baseScale);
-		RANK_1.setScale(baseScale);
-		RANK_2.setScale(baseScale);
-		RANK_3.setScale(baseScale);
-		RANK_4.setScale(baseScale);
-		RANK_5.setScale(baseScale);
-		RANK_6.setScale(baseScale);
-		RANK_7.setScale(baseScale);
-		RANK_8.setScale(baseScale);
-		RANK_9.setScale(baseScale);
-		RANK_A.setScale(baseScale);
 
 		RESULT_WIN.setScale(baseScale);
 		RESULT_LOSE.setScale(baseScale);

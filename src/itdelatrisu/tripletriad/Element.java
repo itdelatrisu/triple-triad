@@ -38,6 +38,9 @@ public enum Element {
 	/** Element animation. */
 	private Animation animation;
 
+	/** First frame (unscaled). */
+	private Image firstFrame;
+
 	/**
 	 * Initializes all element animations.
 	 */
@@ -52,6 +55,8 @@ public enum Element {
 			try {
 				for (int i = 1; i <= frames.length; i++) {
 					Image frame = new Image(String.format("ele-%s%d.png", name, i));
+					if (ele.firstFrame == null)
+						ele.firstFrame = frame;
 					frames[i - 1] = frame.getScaledCopy(length, length);
 				}
 				ele.animation = new Animation(frames, 100);
@@ -84,13 +89,10 @@ public enum Element {
 	}
 
 	/**
-	 * Returns the frame at an index.
-	 * @param frame the frame [0, 3]
-	 * @return the image
+	 * Returns the first frame of the element animation (unscaled).
+	 * @return the first unscaled frame
 	 */
-	public Image getFrame(int frame) {
-		return (animation != null) ? animation.getImage(frame) : null;
-	}
+	public Image getFirstFrame() { return firstFrame; }
 
 	/**
 	 * Draws the element at a position on the board.

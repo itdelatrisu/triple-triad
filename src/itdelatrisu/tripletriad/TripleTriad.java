@@ -522,6 +522,8 @@ public class TripleTriad extends BasicGame {
 			deck.buildHands(playerCards, opponentCards);
 			playerHand = new ArrayList<Card>(Arrays.asList(playerCards));
 			opponentHand = new ArrayList<Card>(Arrays.asList(opponentCards));
+			spinner = Spinner.getRandomSpinner();
+			spinner.setSpeed(5f);
 			init = false;
 		} else {
 			playerHand.clear();
@@ -570,8 +572,6 @@ public class TripleTriad extends BasicGame {
 		loadCardCount = 0;
 		loadCardOffset = 3 + (float) container.getHeight() / Options.getCardLength();
 		textAlpha = 0f;
-		spinner = Spinner.getRandomSpinner();
-		spinner.setSpeed(5f);
 	}
 
 	/**
