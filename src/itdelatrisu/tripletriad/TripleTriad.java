@@ -106,6 +106,9 @@ public class TripleTriad extends BasicGame {
 	/** Alpha level for special text images. */
 	private float textAlpha;
 
+	/** Spinner. */
+	private Spinner spinner;
+
 	/** Game container. */
 	private GameContainer container;
 
@@ -167,6 +170,7 @@ public class TripleTriad extends BasicGame {
 		AudioController.init();
 		GameImage.init();
 		Element.init();
+		Spinner.init();
 
 		// build deck
 		this.deck = new Deck();
@@ -189,14 +193,18 @@ public class TripleTriad extends BasicGame {
 			for (int i = 0, N = Math.min(loadCardCount, 5); i < N; i++)
 				opponentHand.get(i).drawInHand(i, false);
 			if (loadCardCount >= 5) {
-				for (int i = 0, N = loadCardCount % 5; i < N; i++)
+				for (int i = 0, N = loadCardCount - 5; i < N; i++)
 					playerHand.get(i).drawInHand(i, false);
 			}
 
 			if (loadCardCount < 5)
 				opponentHand.get(loadCardCount).drawInHand(loadCardOffset, false);
-			else
+			else if (loadCardCount < 10)
 				playerHand.get(loadCardCount % 5).drawInHand(loadCardOffset, false);
+			else if (timer < 1000)
+				spinner.drawCentered(width / 2, height / 2);
+			else
+				spinner.getFrame((turn == PLAYER) ? 1 : 3).drawCentered(width / 2, height / 2);
 			return;
 		}
 
@@ -212,6 +220,14 @@ public class TripleTriad extends BasicGame {
 		for (int i = 0; i < board.length; i++) {
 			if (board[i] != null)
 				board[i].drawOnBoard();
+		}
+
+		// spinner
+		if (!isGameOver()) {
+			spinner.drawCentered(
+				(width / 2) + ((cardLength * 1.95f) * ((turn == PLAYER) ? 1 : -1)),
+				(height / 2) - (cardLength * 1.5f)
+			);
 		}
 
 		// score
@@ -306,17 +322,31 @@ public class TripleTriad extends BasicGame {
 			throws SlickException {
 		// card loading
 		if (!init) {
+			// sound effect timer
+			if (timer > 0) {
+				if (timer < 1500)  // "start" sound effect length
+					timer += delta;
+				else {  // start game
+					timer = 0;
+					spinner.setSpeed(1f);
+					init = true;
+				}
+				return;
+			}
+
 			int targetOffset = loadCardCount % 5;
 			if (loadCardOffset > targetOffset)
 				loadCardOffset -= (delta / 25f);
 
 			// next card
 			if (loadCardOffset <= targetOffset) {
-				// start game
-				if (++loadCardCount > 9)
-					init = true;
-				else
+				if (++loadCardCount > 9) {  // finished animating: play sound effect
+					AudioController.Effect.START.play();
+					timer = 1;
+				} else {
 					loadCardOffset = 3 + (float) container.getHeight() / Options.getCardLength();
+					AudioController.Effect.CARD.play();
+				}
 			}
 			return;
 		}
@@ -415,18 +445,18 @@ public class TripleTriad extends BasicGame {
 		}
 
 		// not player turn
-		if (turn != PLAYER || result != null || isGameOver())
+		if (turn != PLAYER || !init || result != null || isGameOver())
 			return;
 
 		switch (key) {
 		case Input.KEY_DOWN:
 			if (selectedPosition == -1) {
 				selectedCard = (selectedCard + 1) % playerHand.size();
-				AudioController.playEffect();
+				AudioController.Effect.SELECT.play();
 			} else {
 				if (selectedPosition < 6) {
 					selectedPosition += 3;
-					AudioController.playEffect();
+					AudioController.Effect.SELECT.play();
 				}
 			}
 			break;
@@ -434,47 +464,49 @@ public class TripleTriad extends BasicGame {
 			if (selectedPosition == -1) {
 				int size = playerHand.size();
 				selectedCard = (selectedCard + (size - 1)) % size;
-				AudioController.playEffect();
+				AudioController.Effect.SELECT.play();
 			} else {
 				if (selectedPosition > 2) {
 					selectedPosition -= 3;
-					AudioController.playEffect();
+					AudioController.Effect.SELECT.play();
 				}
 			}
 			break;
 		case Input.KEY_LEFT:
 			if (selectedPosition != -1 && selectedPosition % 3 != 0) {
 				selectedPosition--;
-				AudioController.playEffect();
+				AudioController.Effect.SELECT.play();
 			}
 			break;
 		case Input.KEY_RIGHT:
 			if (selectedPosition != -1 && selectedPosition % 3 != 2) {
 				selectedPosition++;
-				AudioController.playEffect();
+				AudioController.Effect.SELECT.play();
 			}
 			break;
 		case Input.KEY_Z:
 		case Input.KEY_ENTER:
 			if (selectedPosition == -1) {
 				selectedPosition = 4;
-				AudioController.playEffect();
+				AudioController.Effect.SELECT.play();
 			} else {
 				if (playCard(playerHand, selectedCard, selectedPosition))
-					AudioController.playEffect();
+					AudioController.Effect.SELECT.play();
 			}
 			break;
 		case Input.KEY_X:
 		case Input.KEY_BACK:
-			if (selectedPosition != -1)
+			if (selectedPosition != -1) {
 				selectedPosition = -1;
+				AudioController.Effect.BACK.play();
+			}
 			break;
 		case Input.KEY_F1:
 			playerAI.update();
 			selectedCard = playerAI.nextIndex();
 			selectedPosition = playerAI.nextPosition();
 			playCard(playerHand, selectedCard, selectedPosition);
-			AudioController.playEffect();
+			AudioController.Effect.SELECT.play();
 			break;
 		}
 	}
@@ -538,6 +570,8 @@ public class TripleTriad extends BasicGame {
 		loadCardCount = 0;
 		loadCardOffset = 3 + (float) container.getHeight() / Options.getCardLength();
 		textAlpha = 0f;
+		spinner = Spinner.getRandomSpinner();
+		spinner.setSpeed(5f);
 	}
 
 	/**
@@ -566,10 +600,13 @@ public class TripleTriad extends BasicGame {
 		result = new CardResult(card, position, board, elements);
 
 		// change card owners and adjust score
-		if (result.isSame())
+		if (result.isSame()) {
 			cardResult(result.getSameList());
-		else if (result.isPlus())
+			AudioController.Effect.SPECIAL.play();
+		} else if (result.isPlus()) {
 			cardResult(result.getPlusList());
+			AudioController.Effect.SPECIAL.play();
+		}
 		if (result.hasCapture())
 			cardResult(result.getCapturedList());
 
@@ -578,6 +615,7 @@ public class TripleTriad extends BasicGame {
 		selectedCard = 0;
 		selectedPosition = -1;
 		turn = !turn;
+		AudioController.Effect.CARD.play();
 
 		return true;
 	}
@@ -600,5 +638,6 @@ public class TripleTriad extends BasicGame {
 				}
 			}
 		}
+		AudioController.Effect.TURN.play();
 	}
 }

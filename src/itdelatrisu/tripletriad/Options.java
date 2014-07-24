@@ -52,7 +52,7 @@ public class Options {
 	private static int cardLength = 256;
 
 	/** Volume. */
-	private static float musicVolume = 0.1f, soundVolume = 0.5f;
+	private static float musicVolume = 0.6f, soundVolume = 0.8f;
 
 	/** Target frame rate. */
 	private static int fps = 60;

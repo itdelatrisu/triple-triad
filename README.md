@@ -18,9 +18,14 @@ This software was created by Jeffrey Han
 ([@itdelatrisu](https://github.com/itdelatrisu/)).  All game concepts and
 designs are based on work by Square Enix, and music is property of Squre Enix.
 
-Images used in this project are part of FFVIII mods by MCINDUS:
+Game images used in this project are part of FFVIII mods by MCINDUS:
+
  * [Tripod v1.1](http://forums.qhimm.com/index.php?topic=15301.0)
  * [SeeD Reborn v3.2](http://forums.qhimm.com/index.php?topic=15320.0)
+
+Character sprites were created by
+[UltimeciaFFB](http://ultimeciaffb.deviantart.com/), and sound effects were
+extracted by [TekkamanChronos](http://www.youtube.com/watch?v=xKzxcJLiitQ).
 
 ## License
 **This software is licensed under GNU GPL version 3.**
