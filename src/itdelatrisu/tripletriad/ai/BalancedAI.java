@@ -45,20 +45,19 @@ public class BalancedAI extends AI {
 		int handSize = hand.size();
 		ArrayList<Integer> spaces = emptySpaces();
 
-		// store rank differences (avoid recalculating)
-		int[] rankDiffs = new int[spaces.size() * handSize];  
-		int rankDiffIndex = 0;
+		// use lowest level card possible, except if starting second and on last turn
+		boolean useLowestLevel = ((spaces.size() % 2 > 0) || handSize != 2);
 
 		// find move with max number of captured cards
 		int maxCapture = -1;
 		int nextRankDiff = 41;
+		int nextLevel = -1;
 		for (int space : spaces) {
 			for (int index = 0; index < handSize; index++) {
 				Card c = hand.get(index);
 				CardResult result = new CardResult(c, space, board, elements);
 				int captureCount = result.getCapturedCount();
 				int rankDiff = getRankDiff(c, space);
-				rankDiffs[rankDiffIndex++] = rankDiff;
 
 				// determine whether or not to use this result...
 				boolean isValid = false;
@@ -68,7 +67,12 @@ public class BalancedAI extends AI {
 					if ((captureCount > 2) || nextRankDiff - rankDiff > -5)
 						isValid = true;
 				} else if (captureCount == maxCapture) {
-					if (rankDiff < nextRankDiff)
+					if (rankDiff < nextRankDiff ||
+						(rankDiff == nextRankDiff && (
+							(useLowestLevel && c.getLevel() < nextLevel) ||
+							(!useLowestLevel && c.getLevel() > nextLevel)
+						)
+					))
 						isValid = true;
 				} else if (captureCount == maxCapture - 1) {
 					if (nextRankDiff - rankDiff > 5)
@@ -78,38 +82,15 @@ public class BalancedAI extends AI {
 				if (isValid) {
 					maxCapture = captureCount;
 					nextRankDiff = rankDiff;
+					nextLevel = c.getLevel();
 					nextIndex = index;
 					nextPosition = space;
 				}
 			}
 		}
 
-		// no capture possible: find lowest rank difference
-		if (maxCapture == 0) {
-			int minRankDiff = 41;
-			int nextLevel = -1;
-			rankDiffIndex = 0;
-
-			// use lowest level card possible, except if starting second and on last turn
-			boolean useLowestLevel = ((spaces.size() % 2 > 0) || handSize != 2);
-
-			for (int space : spaces) {
-				for (int index = 0; index < handSize; index++) {
-					Card c = hand.get(index);
-					int rankDiff = rankDiffs[rankDiffIndex++];
-					if (rankDiff < minRankDiff ||
-						(rankDiff == minRankDiff && (
-							(useLowestLevel && c.getLevel() < nextLevel) ||
-							(!useLowestLevel && c.getLevel() > nextLevel)
-						)
-					)) {
-						minRankDiff = rankDiff;
-						nextLevel = c.getLevel();
-						nextIndex = index;
-						nextPosition = space;
-					}
-				}
-			}
-		}
+		// no capture possible: find lowest total rank difference
+		if (maxCapture == 0 && spaces.size() != 9)
+			useMinRankDiff(spaces);
 	}
 }

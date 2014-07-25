@@ -350,27 +350,27 @@ public class TripleTriad extends BasicGame {
 			}
 			return;
 		}
-		
-		// card playing
-		if (Card.isCardPlaying()) {
-			Card.update(delta);
-			if (!Card.isCardPlaying()) {
-				// change card owners and adjust score
-				if (result.isSame()) {
-					AudioController.Effect.SPECIAL.play();
-					cardResult(result.getSameList());
-				} else if (result.isPlus()) {
-					AudioController.Effect.SPECIAL.play();
-					cardResult(result.getPlusList());
-				}
-				if (result.hasCapture())
-					cardResult(result.getCapturedList());
-			}
-			return;
-		}
 
 		// card result
 		if (result != null) {
+			// card playing
+			if (Card.isCardPlaying()) {
+				Card.update(delta);
+				if (!Card.isCardPlaying()) {
+					// change card owners and adjust score
+					if (result.isSame()) {
+						AudioController.Effect.SPECIAL.play();
+						cardResult(result.getSameList());
+					} else if (result.isPlus()) {
+						AudioController.Effect.SPECIAL.play();
+						cardResult(result.getPlusList());
+					}
+					if (result.hasCapture())
+						cardResult(result.getCapturedList());
+				}
+				return;
+			}
+
 			Card.update(delta);
 			if (!result.isSame() && !result.isPlus()) {
 				if (!Card.isColorChange()) {  // finish color change animation

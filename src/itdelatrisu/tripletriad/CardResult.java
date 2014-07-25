@@ -40,9 +40,6 @@ public class CardResult {
 	/** Source card. */
 	private Card card;
 
-	/** Source card position. */
-	private int position;
-
 	/** Current board. */
 	private Card[] board;
 
@@ -67,7 +64,6 @@ public class CardResult {
 	 */
 	public CardResult(Card card, int position, Card[] board, Element[] elements) {
 		this.card = card;
-		this.position = position;
 		this.board = board;
 		this.elements = elements;
 
@@ -222,7 +218,7 @@ public class CardResult {
 		int targetRank = target.getRank(targetLocation);
 		if (elements != null) {
 			// element bonuses
-			if (elements[position] != Element.NEUTRAL)
+			if (elements[sourcePosition] != Element.NEUTRAL)
 				sourceRank += (source.getElement() == elements[sourcePosition]) ? 1 : -1;
 			if (elements[targetPosition] != Element.NEUTRAL)
 				targetRank += (target.getElement() == elements[targetPosition]) ? 1 : -1;

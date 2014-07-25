@@ -19,7 +19,6 @@
 package itdelatrisu.tripletriad.ai;
 
 import itdelatrisu.tripletriad.Card;
-import itdelatrisu.tripletriad.CardResult;
 import itdelatrisu.tripletriad.Element;
 
 import java.util.ArrayList;
@@ -42,52 +41,6 @@ public class DefensiveAI extends AI {
 
 	@Override
 	public void update() {
-		int handSize = hand.size();
-		ArrayList<Integer> spaces = emptySpaces();
-
-		// use lowest level card possible, except if starting second and on last turn
-		boolean useLowestLevel = ((spaces.size() % 2 > 0) || handSize != 2);
-
-		// find lowest rank difference
-		int minRankDiff = 41;
-		int nextLevel = -1;
-		int nextCapture = -1;
-		for (int space : spaces) {
-			for (int index = 0; index < handSize; index++) {
-				Card c = hand.get(index);
-				int rankDiff = getRankDiff(c, space);
-
-				// determine whether or not to use this result...
-				boolean isValid = false;
-				if (rankDiff == 0) {
-					// if card cannot be captured, switch to offensive mode
-					CardResult result = new CardResult(c, space, board, elements);
-					int captureCount = result.getCapturedCount();
-					if (captureCount > nextCapture ||
-						(captureCount == nextCapture && (
-							(useLowestLevel && c.getLevel() < nextLevel) ||
-							(!useLowestLevel && c.getLevel() > nextLevel)
-						)
-					)) {
-						isValid = true;
-						nextCapture = captureCount;
-					}
-				} else {
-					if (rankDiff < minRankDiff ||
-						(rankDiff == minRankDiff && (
-							(useLowestLevel && c.getLevel() < nextLevel) ||
-							(!useLowestLevel && c.getLevel() > nextLevel)
-						)
-					))
-						isValid = true;
-				}
-				if (isValid) {
-					minRankDiff = rankDiff;
-					nextLevel = c.getLevel();
-					nextIndex = index;
-					nextPosition = space;
-				}
-			}
-		}
+		useMinRankDiff(emptySpaces());
 	}
 }

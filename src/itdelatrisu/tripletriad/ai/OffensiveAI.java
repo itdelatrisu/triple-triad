@@ -70,26 +70,8 @@ public class OffensiveAI extends AI {
 			}
 		}
 
-		// no capture possible: find lowest rank difference
-		if (maxCapture == 0) {
-			int minRankDiff = 41;
-			for (int space : spaces) {
-				for (int index = 0; index < handSize; index++) {
-					Card c = hand.get(index);
-					int rankDiff = getRankDiff(c, space);
-					if (rankDiff < minRankDiff ||
-						(rankDiff == minRankDiff && (
-							(useLowestLevel && c.getLevel() < nextLevel) ||
-							(!useLowestLevel && c.getLevel() > nextLevel)
-						)
-					)) {
-						minRankDiff = rankDiff;
-						nextLevel = c.getLevel();
-						nextIndex = index;
-						nextPosition = space;
-					}
-				}
-			}
-		}
+		// no capture possible: find lowest total rank difference
+		if (maxCapture == 0)
+			useMinRankDiff(spaces);
 	}
 }
