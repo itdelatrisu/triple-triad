@@ -303,7 +303,7 @@ public class TripleTriad extends BasicGame {
 				Image infoBox = GameImage.INFO_BOX.getImage();
 				float infoX = (width - infoBox.getWidth()) / 2;
 				float infoY = (height - infoBox.getHeight()) / 2 + (cardLength * 1.4f);
-				GameImage.INFO_BOX.getImage().draw(infoX, infoY);
+				infoBox.draw(infoX, infoY);
 				GameImage.INFO_TEXT.getImage().draw(
 					infoX + (infoBox.getWidth() * 0.015f),
 					infoY + (infoBox.getHeight() * 0.015f)

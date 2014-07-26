@@ -143,12 +143,12 @@ public class Options {
 		container.setShowFPS(false);
 		container.setAlwaysRender(true);
 		container.getInput().enableKeyRepeat();
-		container.setClearEachFrame(false);
 		container.setMusicVolume(musicVolume);
 		container.setSoundVolume(soundVolume);
 
 		try {
-			font = new UnicodeFont(fontFile.getName(), 32, false, false);
+			font = new UnicodeFont(fontFile.getName(),
+					(int) (32 * (cardLength / 256f) * 1.6f), false, false);
 			font.addAsciiGlyphs();
 			font.getEffects().add(new ColorEffect());
 			font.loadGlyphs();

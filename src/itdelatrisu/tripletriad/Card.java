@@ -324,7 +324,7 @@ public class Card {
 	 */
 	public void playAtPosition(int position, int index) {
 		this.position = position;
-		oldHandIndex = index;
+		this.oldHandIndex = index;
 
 		isCardPlaying = true;
 		animationProgress = 2f;

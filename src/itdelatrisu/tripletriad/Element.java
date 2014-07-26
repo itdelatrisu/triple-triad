@@ -77,14 +77,8 @@ public enum Element {
 
 		// build array
 		Element[] board = new Element[9];
-		for (int i = 0; i < board.length; i++) {
-			if (Math.random() < 0.25) {
-				if (elements.getFirst() == NEUTRAL)
-					elements.remove();
-				board[i] = elements.remove();
-			} else
-				board[i] = NEUTRAL;
-		}
+		for (int i = 0; i < board.length; i++)
+			board[i] = (Math.random() < 0.25) ? elements.remove() : NEUTRAL;
 		return board;
 	}
 
