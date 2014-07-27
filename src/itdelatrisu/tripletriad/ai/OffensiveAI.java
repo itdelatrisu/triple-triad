@@ -55,14 +55,14 @@ public class OffensiveAI extends AI {
 			for (int index = 0; index < handSize; index++) {
 				Card c = hand.get(index);
 				CardResult result = new CardResult(c, space, board, elements);
-				int captureCount = result.getCapturedCount();
-				if (captureCount > maxCapture ||
-					(captureCount == maxCapture && (
+				int capturedCount = result.getCapturedCount();
+				if (capturedCount > maxCapture ||
+					(capturedCount == maxCapture && (
 						(useLowestLevel && c.getLevel() < nextLevel) ||
 						(!useLowestLevel && c.getLevel() > nextLevel)
 					)
 				)) {
-					maxCapture = captureCount;
+					maxCapture = capturedCount;
 					nextLevel = c.getLevel();
 					nextIndex = index;
 					nextPosition = space;

@@ -33,7 +33,7 @@ import org.newdawn.slick.util.ResourceLoader;
 public class Deck {
 	/** List of cards. */
 	private ArrayList<Card> deck;
-	
+
 	/**
 	 * Creates a deck by parsing all cards.
 	 */

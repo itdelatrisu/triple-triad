@@ -513,6 +513,8 @@ public class TripleTriad extends BasicGame {
 			} else {
 				if (playCard(playerHand, selectedCard, selectedPosition))
 					AudioController.Effect.SELECT.play();
+				else
+					AudioController.Effect.INVALID.play();
 			}
 			break;
 		case Input.KEY_X:
@@ -588,6 +590,8 @@ public class TripleTriad extends BasicGame {
 				AudioController.Effect.SELECT.play();
 			} else if (playCard(playerHand, selectedCard, boardPosition))
 				AudioController.Effect.SELECT.play();
+			else
+				AudioController.Effect.INVALID.play();
 			return;
 		}
 	}

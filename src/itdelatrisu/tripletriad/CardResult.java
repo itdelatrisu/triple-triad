@@ -52,9 +52,6 @@ public class CardResult {
 	/** Card sums list. */
 	private HashMap<Integer, ArrayList<Card>> sums;
 
-	/** Whether or not "Same Wall" has been triggered. */
-	private boolean sameWall = false;
-
 	/**
 	 * Constructor.
 	 * @param card source card
@@ -81,6 +78,9 @@ public class CardResult {
 			this.same = new ArrayList<Card>();
 		if (Rule.PLUS.isActive())
 			this.sums = new HashMap<Integer, ArrayList<Card>>();
+
+		// if "Same Wall" has been triggered
+		boolean sameWall = false;
 
 		// process card results on all sides (if valid)
 		// set "Same Wall" status on borders
@@ -141,7 +141,8 @@ public class CardResult {
 						filterCaptured(plus);
 						calcCombo(plus);
 						break;
-					}
+					} else
+						capturedCount = 0;
 				}
 			}
 			sums = null;

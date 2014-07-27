@@ -274,7 +274,7 @@ public class Card {
 				drawInHand(oldHandIndex - (1.5f * (2 - animationProgress) * height / cardLength), true);
 				return;
 			} else
-				y -= (animationProgress) * height;
+				y -= animationProgress * height;
 		}
 
 		drawCentered(x, y);

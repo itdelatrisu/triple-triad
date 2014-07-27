@@ -34,6 +34,7 @@ public class AudioController {
 	public enum Effect {
 		BACK ("sound-back.wav"),
 		CARD ("sound-card.wav"),
+		INVALID ("sound-invalid.wav"),
 		SELECT ("sound-select.wav"),
 		SPECIAL ("sound-special.wav"),
 		START ("sound-start.wav"),

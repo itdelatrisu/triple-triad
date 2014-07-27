@@ -149,17 +149,20 @@ public abstract class AI {
 			if (elements != null && elements[position - 1] != Element.NEUTRAL)
 				totalRank += (board[position - 1].getElement() == elements[position - 1]) ? 1 : -1;
 			sides++;
-		} if (position % 3 != 2 && board[position + 1] != null && board[position + 1].getOwner() == owner) {
+		}
+		if (position % 3 != 2 && board[position + 1] != null && board[position + 1].getOwner() == owner) {
 			totalRank += board[position + 1].getRank(Card.Rank.LEFT);
 			if (elements != null && elements[position + 1] != Element.NEUTRAL)
 				totalRank += (board[position + 1].getElement() == elements[position + 1]) ? 1 : -1;
 			sides++;
-		} if (position > 2 && board[position - 3] != null && board[position - 3].getOwner() == owner) {
+		}
+		if (position > 2 && board[position - 3] != null && board[position - 3].getOwner() == owner) {
 			totalRank += board[position - 3].getRank(Card.Rank.BOTTOM);
 			if (elements != null && elements[position - 3] != Element.NEUTRAL)
 				totalRank += (board[position - 3].getElement() == elements[position - 3]) ? 1 : -1;
 			sides++;
-		} if (position < 6 && board[position + 3] != null && board[position + 3].getOwner() == owner) {
+		}
+		if (position < 6 && board[position + 3] != null && board[position + 3].getOwner() == owner) {
 			totalRank += board[position + 3].getRank(Card.Rank.TOP);
 			if (elements != null && elements[position + 3] != Element.NEUTRAL)
 				totalRank += (board[position + 3].getElement() == elements[position + 3]) ? 1 : -1;

@@ -56,17 +56,17 @@ public class BalancedAI extends AI {
 			for (int index = 0; index < handSize; index++) {
 				Card c = hand.get(index);
 				CardResult result = new CardResult(c, space, board, elements);
-				int captureCount = result.getCapturedCount();
+				int capturedCount = result.getCapturedCount();
 				int rankDiff = getRankDiff(c, space);
 
 				// determine whether or not to use this result...
 				boolean isValid = false;
 				if (maxCapture == -1)
 					isValid = true;
-				else if (captureCount > maxCapture) {
-					if ((captureCount > 2) || nextRankDiff - rankDiff > -5)
+				else if (capturedCount > maxCapture) {
+					if ((capturedCount > 2) || nextRankDiff - rankDiff > -5)
 						isValid = true;
-				} else if (captureCount == maxCapture) {
+				} else if (capturedCount == maxCapture) {
 					if (rankDiff < nextRankDiff ||
 						(rankDiff == nextRankDiff && (
 							(useLowestLevel && c.getLevel() < nextLevel) ||
@@ -74,13 +74,13 @@ public class BalancedAI extends AI {
 						)
 					))
 						isValid = true;
-				} else if (captureCount == maxCapture - 1) {
+				} else if (capturedCount == maxCapture - 1) {
 					if (nextRankDiff - rankDiff > 5)
 						isValid = true;
 				}
 
 				if (isValid) {
-					maxCapture = captureCount;
+					maxCapture = capturedCount;
 					nextRankDiff = rankDiff;
 					nextLevel = c.getLevel();
 					nextIndex = index;
