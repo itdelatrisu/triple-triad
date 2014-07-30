@@ -116,8 +116,7 @@ public enum GameImage {
 		CARD_RED.setScale(cardLength, cardLength);
 		CARD_GRAY.setScale(cardLength, cardLength);
 
-		float cursorScale = (cardLength / 3f) / CURSOR.img.getWidth();
-		CURSOR.setScale(cursorScale);
+		CURSOR.setScale(baseScale / 2.25f);
 
 		int scoreLength = (int) (cardLength * 0.4f);
 		SCORE_1.setScale(scoreLength, scoreLength);

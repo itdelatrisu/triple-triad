@@ -457,7 +457,7 @@ public class TripleTriad extends BasicGame {
 
 		// restart game
 		if (key == Input.KEY_F5 || (
-			isGameOver() && (playerScore != opponentScore) &&
+			isGameOver() && (playerScore != opponentScore || !Rule.SUDDEN_DEATH.isActive()) &&
 			textAlpha >= 1f && result == null &&
 			(key == Input.KEY_Z || key == Input.KEY_ENTER)
 		)) {
@@ -540,7 +540,7 @@ public class TripleTriad extends BasicGame {
 			return;
 
 		// restart game
-		if (isGameOver() && (playerScore != opponentScore) &&
+		if (isGameOver() && (playerScore != opponentScore || !Rule.SUDDEN_DEATH.isActive()) &&
 			textAlpha >= 1f && result == null) {
 			restart(true);
 			return;
