@@ -41,12 +41,15 @@ public class BalancedAI extends AI {
 	}
 
 	@Override
-	public void update() {
+	public void update(int thisScore, int thatScore) {
 		int handSize = hand.size();
 		ArrayList<Integer> spaces = emptySpaces();
 
 		// use lowest level card possible, except if starting second and on last turn
 		boolean useLowestLevel = ((spaces.size() % 2 > 0) || handSize != 2);
+
+		// if losing, use less placement restrictions
+		boolean isLosing = (thisScore < thatScore);
 
 		// find move with max number of captured cards
 		int maxCapture = -1;
@@ -64,7 +67,7 @@ public class BalancedAI extends AI {
 				if (maxCapture == -1)
 					isValid = true;
 				else if (capturedCount > maxCapture) {
-					if ((capturedCount > 2) || nextRankDiff - rankDiff > -5)
+					if (capturedCount > 2 || nextRankDiff - rankDiff > -5 || isLosing)
 						isValid = true;
 				} else if (capturedCount == maxCapture) {
 					if (rankDiff < nextRankDiff ||
@@ -74,7 +77,7 @@ public class BalancedAI extends AI {
 						)
 					))
 						isValid = true;
-				} else if (capturedCount == maxCapture - 1) {
+				} else if (capturedCount == maxCapture - 1 && !isLosing) {
 					if (nextRankDiff - rankDiff > 5)
 						isValid = true;
 				}

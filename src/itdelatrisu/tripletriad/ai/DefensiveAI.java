@@ -40,7 +40,7 @@ public class DefensiveAI extends AI {
 	}
 
 	@Override
-	public void update() {
+	public void update(int thisScore, int thatScore) {
 		useMinRankDiff(emptySpaces());
 	}
 }

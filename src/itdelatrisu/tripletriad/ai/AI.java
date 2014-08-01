@@ -56,8 +56,10 @@ public abstract class AI {
 
 	/**
 	 * Calculates the next card index and position.
+	 * @param thisScore the AI's score [1, 9]
+	 * @param thatScore the opposing player's score [1, 9]
 	 */
-	public abstract void update();
+	public abstract void update(int thisScore, int thatScore);
 
 	/**
 	 * Returns the hand index of the next card to be played.

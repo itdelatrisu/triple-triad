@@ -41,7 +41,7 @@ public class OffensiveAI extends AI {
 	}
 
 	@Override
-	public void update() {
+	public void update(int thisScore, int thatScore) {
 		ArrayList<Integer> spaces = emptySpaces();
 		int handSize = hand.size();
 

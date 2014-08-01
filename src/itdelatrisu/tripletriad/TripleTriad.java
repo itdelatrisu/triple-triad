@@ -424,7 +424,7 @@ public class TripleTriad extends BasicGame {
 		// opponent turn
 		if (turn == OPPONENT) {
 			if (timer == 0) {  // calculate next move
-				opponentAI.update();
+				opponentAI.update(opponentScore, playerScore);
 				timer += delta;
 			} else if (timer < WAIT_TIME) {  // delay, move card
 				int nextIndex = opponentAI.nextIndex();
@@ -525,7 +525,7 @@ public class TripleTriad extends BasicGame {
 			}
 			break;
 		case Input.KEY_F1:
-			playerAI.update();
+			playerAI.update(playerScore, opponentScore);
 			selectedCard = playerAI.nextIndex();
 			selectedPosition = playerAI.nextPosition();
 			playCard(playerHand, selectedCard, selectedPosition);

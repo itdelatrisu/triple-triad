@@ -40,7 +40,7 @@ public class RandomAI extends AI {
 	}
 
 	@Override
-	public void update() {
+	public void update(int thisScore, int thatScore) {
 		ArrayList<Integer> spaces = emptySpaces();
 		nextIndex = (int) (Math.random() * hand.size());
 		nextPosition = spaces.get((int) (Math.random() * spaces.size()));
